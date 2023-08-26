@@ -70,6 +70,24 @@ class PinjamController extends Controller
         Pinjam::create($validatedData);
         return redirect('/pinjam')->with('pesan', 'Input Data Berhasil!');
     }
+    // public function save_pinjam(Request $request)
+
+    // {
+
+    //     //dd($request->all());
+
+    //     Pinjam::create([
+    //         'name' => $request['name'],
+    //         'daily' => $request['daily'],
+    //         'next' => $request['next'],
+    //         'status' => "daily",
+    //         'waktu' => $request['waktu'],
+    //         'updated_at' => $request['updated_at'],
+
+    //     ]);
+
+    //     return redirect()->route('daily')->with('succes', 'Data berhasil ditambah');
+    // }
 
     /**
      * Update the specified resource in storage.

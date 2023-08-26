@@ -35,7 +35,7 @@
                                 <input type="text" class="form-control mb-2" id="tempat_terbit" name="tempat_terbit" value="{{old('tempat_terbit')}}" required>
                                 <label for="stok">Stok:</label>
                                 <input type="number" class="form-control mb-2" id="stok" name="stok" value="{{old('stok')}}" required>
-                                <button type="submit" class="btn btn-success col-md-2">Submit</button>
+                                <button type="submit" class="btn btn-success">submit</button>
 
                             </form>
                         </div>
