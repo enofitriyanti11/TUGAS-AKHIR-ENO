@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pinjam;
+use App\Models\anggota;
+use App\Models\Buku;
 use Illuminate\Http\Request;
 
 class PinjamController extends Controller
@@ -12,7 +14,7 @@ class PinjamController extends Controller
      */
     public function index()
     {
-        $pinjams = Pinjam::all();
+        $pinjams = Pinjam::with('anggota', 'buku')->get();
         return view('pinjam.index', compact('pinjams'));
     }
 
@@ -21,7 +23,10 @@ class PinjamController extends Controller
      */
     public function create()
     {
-        return view('pinjam.create');
+        $anggotas = anggota::all(); // Mengambil semua data anggota
+        $bukus = Buku::all(); // Mengambil semua data buku
+
+        return view('pinjam.create', compact('anggotas', 'bukus'));
     }
 
     /**
@@ -30,42 +35,40 @@ class PinjamController extends Controller
     public function edit(string $id_pinjam)
     {
         $pinjam = Pinjam::findOrFail($id_pinjam);
-        return view('pinjam.edit', compact('pinjam'));
+        $anggotas = anggota::all(); // Mengambil semua data anggota
+        $bukus = Buku::all(); // Mengambil semua data buku
+        return view('pinjam.edit', compact('pinjam', 'anggotas', 'bukus'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
 
-    public function getDataFromBarcode($barcode)
-    {
-        $data = explode(';', $barcode);
-        $nama_anggota = $data[1];
+    // public function getDataFromBarcode($barcode)
+    // {
+    //     $data = explode(';', $barcode);
+    //     $nama_anggota = $data[1];
 
-        return compact('nama_anggota');
-    }
-    public function showForm(Request $request)
-    {
-        $barcode_data = $this->getDataFromBarcode($request->barcode);
-        return view('formulir', $barcode_data);
-    }
+    //     return compact('nama_anggota');
+    // }
+    // public function showForm(Request $request)
+    // {
+    //     $barcode_data = $this->getDataFromBarcode($request->barcode);
+    //     return view('formulir', $barcode_data);
+    // }
 
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+            'id_anggota' => 'required|exists:anggotas,id_anggota',
+            'id_buku' => 'required|exists:bukus,id_buku',
             'tgl_pinjam' => 'required',
-            'tgl_kembali' => 'required|exists:kategoris,id_kategori',
-            'nama_anggota' => 'required',
-            // 'id_anggota' => 'required|exists:anggotas, id_anggota,',
-            'id_buku' => 'required|exists:bukus, id_buku,',
+            'tgl_kembali' => 'required',
             'status' => 'required',
+
         ]);
-
-        pinjam::create($validatedData);
+        Pinjam::create($validatedData);
         return redirect('/pinjam')->with('pesan', 'Input Data Berhasil!');
-
-        // $pinjam->tanggal_pinjam = now(); // Isi dengan tanggal saat ini
-        // $pinjam->save();
     }
 
     /**
@@ -73,6 +76,22 @@ class PinjamController extends Controller
      */
     public function update(Request $request,  $id_pinjam)
     {
+        $this->validate($request, [
+            'id_anggota' => 'required|exists:anggotas,id_anggota',
+            'id_buku' => 'required|exists:bukus,id_buku',
+            'tgl_pinjam' => 'required',
+            'tgl_kembali' => 'required',
+            'status' => 'required',
+        ]);
+
+        $pinjam = Pinjam::findOrFail($id_pinjam);
+        $pinjam->id_anggota = $request->input('id_anggota');
+        $pinjam->id_buku = $request->input('id_buku');
+        $pinjam->tgl_pinjam = $request->input('tgl_pinjam');
+        $pinjam->tgl_kembali = $request->input('tgl_kembali');
+        $pinjam->save();
+
+        return redirect('/pinjam')->with('success', 'Peminjaman berhasil diperbarui.');
     }
 
     /**
