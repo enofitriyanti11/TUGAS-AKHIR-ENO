@@ -29,16 +29,46 @@ class AnggotaController extends Controller
         return view('anggota.edit', compact('anggota'));
     }
 
-    public function store(Request $request)
+    private function calculateEAN13Checksum($digits)
     {
+        $digitsArray = str_split($digits); // Konversi angka menjadi array digit
 
-        $number = mt_rand(1000000000, 9999999999);
+        $evenSum = 0;
+        $oddSum = 0;
 
-        if ($this->anggotaCodeExists($number)) {
-            $number = mt_rand(1000000000, 9999999999);
+        for ($i = 0; $i < 12; $i++) {
+            if ($i % 2 === 0) {
+                $oddSum += $digitsArray[$i];
+            } else {
+                $evenSum += $digitsArray[$i];
+            }
         }
 
-        $request['anggota_code'] = $number;
+        $totalSum = $oddSum + $evenSum * 3;
+        $remainder = $totalSum % 10;
+
+        return $remainder === 0 ? 0 : 10 - $remainder;
+    }
+
+
+    public function store(Request $request)
+    {
+        // Generate 12 digit random number
+        $randomNumber = mt_rand(100000000000, 999999999999);
+
+        // Calculate 1 digit checksum
+        $checksum = $this->calculateEAN13Checksum($randomNumber);
+
+        // Create 13 digit anggota code
+        $anggotaCode = $randomNumber . $checksum;
+
+        // Validate and ensure it's unique
+        if ($this->anggotaCodeExists($anggotaCode)) {
+            // Generate again if it's not unique
+            // ...
+        }
+
+        $request['anggota_code'] = $anggotaCode;
 
         $validatedData = $request->validate([
             'nama_anggota' => 'required',
@@ -50,6 +80,11 @@ class AnggotaController extends Controller
         ]);
         anggota::create($validatedData);
         return redirect('/anggota')->with('pesan', 'Input Data Berhasil!');
+    }
+
+    public function anggotaCodeExists($code)
+    {
+        return anggota::where('anggota_code', $code)->exists();
     }
 
     /**
@@ -72,11 +107,6 @@ class AnggotaController extends Controller
         $anggota->save();
 
         return redirect('/anggota')->with('success', 'anggota berhasil diperbarui.');
-    }
-
-    public function anggotaCodeExists($number)
-    {
-        return anggota::whereAnggotaCode($number)->exists();
     }
 
     public function destroy(Request $request, $id_anggota)

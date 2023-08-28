@@ -39,9 +39,10 @@
                                         <td>{{ $anggota->kelas }}</td>
                                         <td>{{ $anggota->jenis_kelamin }}</td>
                                         <td>{{ $anggota->alamat }}</td>
-                                        <td>{!! DNS1D::getBarcodeHTML("$anggota->anggota_code",'UPCA',1,25) !!}
+                                        <td>{!! DNS1D::getBarcodeHTML(htmlspecialchars($anggota->anggota_code), 'EAN13') !!}
                                             <p class="barcode">p - {{ $anggota->anggota_code }}
                                         </td>
+
                                         <td>
                                             <a href="{{route ('anggota.edit', $anggota->id_anggota) }}" class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i>

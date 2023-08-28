@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PinjamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::post('/get-anggota-info', [PinjamController::class, 'getAnggotaInfo'])->name('get.anggota');
+Route::post('/get-buku-info', [PinjamController::class, 'getBukuInfo'])->name('get.buku');

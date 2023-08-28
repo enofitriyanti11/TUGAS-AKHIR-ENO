@@ -21,7 +21,7 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">No</th>
-                                        <th scope="col">Tanggal Pinjam</th>
+                                        <th scope="col">Rentang Peminjaman </th>
                                         <th scope="col">Tanggal Pengembalian</th>
                                         <th scope="col">Nama Siswa</th>
                                         <th scope="col">Judul Buku</th>
@@ -33,21 +33,45 @@
                                 <tbody>
                                     @foreach ($pinjams as $pinjam)
                                     <tr>
-                                        <th>{{ $pinjam->id_pinjam }}</th>
-                                        <td>{{ $pinjam->tgl_pinjam }}</td>
-                                        <td>{{ $pinjam->tgl_kembali }}</td>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ date('d-m-Y', strtotime($pinjam->tgl_pinjam )) }} s/d {{ date('d-m-Y', strtotime($pinjam->tgl_kembali )) }} </td>
+                                        <td>{{ $pinjam->status == 'dipinjam' ? '⛔belum dikembalikan' : date('d-m-Y', strtotime($pinjam->tgl_pengembalian )) }} </td>
                                         <td>{{ $pinjam->anggota->nama_anggota }}</td>
                                         <td>{{ $pinjam->buku->judul }}</td>
-                                        <td>{{ $pinjam->status }}</td>
+                                        <td>{{ $pinjam->status == 'dipinjam' ? '⛔belum dikembalikan' : 'Rp '.number_format($pinjam->denda) }}</td>
                                         <td>
-                                            <a href="{{route ('pinjam.edit', $pinjam->id_pinjam) }}" class="btn btn-warning btn-sm">
-                                                <i class="fas fa-edit"></i>
+                                            @if ($pinjam->status == 'dipinjam')
+                                            <span class="badge bg-danger">{{ $pinjam->status }}</span>
+                                            @else
+                                            <span class="badge bg-success">{{ $pinjam->status }}</span>
+                                            @endif
+                                        </td>
+                                        <!-- <td>
+                                            @if ($pinjam->status == 'dipinjam')
+                                            <a onclick="return confirm('Yakin buku telah di kembalikan?')" href="{{route ('anggota.konfirmasi_pengembalian', $pinjam->id_pinjam) }}" class="btn btn-success btn-sm" title="konfirmasi pengembalian">
+                                                <i class="fas fa-check btn-block"></i>
                                             </a>
                                             <form action="{{ route('pinjam.destroy', $pinjam->id_pinjam) }}" method="POST" style="display: inline-block;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus buku ini?')">
                                                     <i class=" fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                            @else
+                                            -
+                                            @endif
+                                        </td> -->
+                                        <td>
+                                            <a onclick="return confirm('Yakin buku telah dikembalikan?')" href="{{ route('anggota.konfirmasi_pengembalian', $pinjam->id_pinjam) }}" class="btn btn-success btn-sm" title="Konfirmasi Pengembalian">
+                                                <i class="fas fa-check btn-block"></i>
+                                            </a>
+
+                                            <form action="{{ route('pinjam.destroy', $pinjam->id_pinjam) }}" method="POST" style="display: inline-block;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus buku ini?')">
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
                                         </td>

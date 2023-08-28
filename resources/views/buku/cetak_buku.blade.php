@@ -45,8 +45,11 @@
         @foreach ($bukus as $buku)
         <div class="column">
             <div>{{ $buku->judul }}</div>
-            <div class="barcode">{!! DNS1D::getBarcodeHTML($buku->buku_code, 'UPCA', 2, 50) !!}</div>
-            <div>{{ $buku->buku_code }}</div>
+
+            <div class="barcode">
+                {!! DNS1D::getBarcodeHTML(htmlspecialchars($buku->buku_code), 'EAN13') !!}
+                <div>{{ $buku->buku_code }}</div>
+            </div>
         </div>
         @endforeach
     </div>

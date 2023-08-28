@@ -44,7 +44,7 @@
                                         <td>{{ $buku->penerbit }}</td>
                                         <td>{{ $buku->tempat_terbit }}</td>
                                         <td>{{ $buku->stok }}</td>
-                                        <td>{!! DNS1D::getBarcodeHTML("$buku->buku_code",'UPCA',1,25) !!}
+                                        <td>{!! DNS1D::getBarcodeHTML(htmlspecialchars($buku->buku_code), 'EAN13') !!}
                                             <p class="barcode">p - {{ $buku->buku_code }}
                                         </td>
                                         <td>

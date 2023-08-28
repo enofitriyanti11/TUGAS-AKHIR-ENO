@@ -5,96 +5,82 @@ namespace App\Http\Controllers;
 use App\Models\Pinjam;
 use App\Models\anggota;
 use App\Models\Buku;
+use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 
 class PinjamController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $pinjams = Pinjam::with('anggota', 'buku')->get();
         return view('pinjam.index', compact('pinjams'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $anggotas = anggota::all(); // Mengambil semua data anggota
-        $bukus = Buku::all(); // Mengambil semua data buku
-
+        $anggotas = Anggota::all();
+        $bukus = Buku::all();
         return view('pinjam.create', compact('anggotas', 'bukus'));
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id_pinjam)
-    {
-        $pinjam = Pinjam::findOrFail($id_pinjam);
-        $anggotas = anggota::all(); // Mengambil semua data anggota
-        $bukus = Buku::all(); // Mengambil semua data buku
-        return view('pinjam.edit', compact('pinjam', 'anggotas', 'bukus'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-
-    // public function getDataFromBarcode($barcode)
-    // {
-    //     $data = explode(';', $barcode);
-    //     $nama_anggota = $data[1];
-
-    //     return compact('nama_anggota');
-    // }
-    // public function showForm(Request $request)
-    // {
-    //     $barcode_data = $this->getDataFromBarcode($request->barcode);
-    //     return view('formulir', $barcode_data);
-    // }
 
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'id_anggota' => 'required|exists:anggotas,id_anggota',
-            'id_buku' => 'required|exists:bukus,id_buku',
+            'id_anggota' => 'required',
+            'id_buku' => 'required',
             'tgl_pinjam' => 'required',
-            'tgl_kembali' => 'required',
-            'status' => 'required',
-
         ]);
-        Pinjam::create($validatedData);
-        return redirect('/pinjam')->with('pesan', 'Input Data Berhasil!');
+
+        Pinjam::create([
+            'id_anggota' => $request->id_anggota,
+            'id_buku' => $request->id_buku,
+            'tgl_pinjam' => $request->tgl_pinjam,
+            'tgl_kembali' => date("Y-m-d", strtotime($request->tgl_pinjam . " +$request->lama_pinjam days")),
+            'status' => 'dipinjam',
+        ]);
+
+        //update stok berkurang
+        Buku::where('id_buku', $request->id_buku)->update([
+            'stok' => DB::raw("stok-1")
+        ]);
+        return redirect()->route('pinjam.index')->with('pesan', 'Input Data Berhasil!');
+
+        // return redirect('/pinjam')->with('pesan', 'Input Data Berhasil!');
     }
-    // public function save_pinjam(Request $request)
 
-    // {
-
-    //     //dd($request->all());
-
-    //     Pinjam::create([
-    //         'name' => $request['name'],
-    //         'daily' => $request['daily'],
-    //         'next' => $request['next'],
-    //         'status' => "daily",
-    //         'waktu' => $request['waktu'],
-    //         'updated_at' => $request['updated_at'],
-
-    //     ]);
-
-    //     return redirect()->route('daily')->with('succes', 'Data berhasil ditambah');
-    // }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request,  $id_pinjam)
+    public function konfirmasi_pengembalian(Pinjam $pinjam)
     {
-        $this->validate($request, [
+        //update status pinjam, dan tgl pengembalian
+        $pinjam->tgl_pengembalian = now();
+        $pinjam->status = 'dikembalikan';
+        //hitung denda jika lewat tgl kembali
+        $returnDateTime = new DateTime($pinjam->tgl_kembali);
+        $returnedDateTime = new DateTime(now());
+
+        if ($returnedDateTime > $returnDateTime) {
+            $interval = $returnDateTime->diff($returnedDateTime);
+            if ($interval->days > 0) {
+                $pinjam->denda = $interval->days * 500;
+            } else {
+                $pinjam->denda = 0;
+            }
+        } else {
+            $pinjam->denda = 0;
+        }
+        //update stok
+        Buku::where('id_buku', $pinjam->id_buku)->update([
+            'stok' => DB::raw("stok+1")
+        ]);
+        $pinjam->save();
+        return redirect()->route('pinjam.index')->with('pesan', 'Berhasil dikonfirmasi!');
+    }
+
+    public function update(Request $request, $id_pinjam)
+    {
+
+        $validatedData = $request->validate([
             'id_anggota' => 'required|exists:anggotas,id_anggota',
             'id_buku' => 'required|exists:bukus,id_buku',
             'tgl_pinjam' => 'required',
@@ -107,21 +93,64 @@ class PinjamController extends Controller
         $pinjam->id_buku = $request->input('id_buku');
         $pinjam->tgl_pinjam = $request->input('tgl_pinjam');
         $pinjam->tgl_kembali = $request->input('tgl_kembali');
-        $pinjam->save();
+        $pinjam->status = $request->input('status');
 
-        return redirect('/pinjam')->with('success', 'Peminjaman berhasil diperbarui.');
+        // Simpan tanggal tgl_seharusnya_kembali sebagai string dari input form
+        $tglSeharusnyaKembaliStr = $request->input('tgl_seharusnya_kembali');
+
+        // Ubah string menjadi objek DateTime
+        $tglSeharusnyaKembali = new \DateTime($tglSeharusnyaKembaliStr);
+
+        // Simpan tanggal tgl_kembali sebagai string dari input form
+        $tglKembaliStr = $request->input('tgl_kembali');
+
+        // Ubah string menjadi objek DateTime
+        $tglKembali = new \DateTime($tglKembaliStr);
+
+        // Hitung selisih hari antara tanggal kembali dan tanggal seharusnya dikembalikan
+        $selisihHari = $tglKembali->diff($tglSeharusnyaKembali)->days;
+
+        // Hitung denda jika terlambat mengembalikan
+        $denda = $selisihHari > 0 ? $selisihHari * 500 : 0;
+
+        $pinjam->denda = $denda;
+
+        $pinjam->save();
+        $pinjam->update($validatedData);
+
+
+        return redirect('/pinjam.index')->with('success', 'Peminjaman berhasil diperbarui.');
     }
 
-    /**
-     * Display the specified resource.
-     */
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Request $request, $id_pinjam)
+    public function destroy($id_pinjam)
     {
+        $pinjam = Pinjam::where('id_pinjam', $id_pinjam)->first();
+        //update stok bertambah
+        Buku::where('id_buku', $pinjam->id_buku)->update([
+            'stok' => DB::raw("stok+1")
+        ]);
         Pinjam::destroy($id_pinjam);
         return redirect('/pinjam')->with('pesan', 'Data berhasil dihapus');
+    }
+
+    public function getAnggotaInfo(Request $request)
+    {
+        $barcodeAnggota = $request->barcodeAnggota;
+        $anggota = anggota::where('anggota_code', $barcodeAnggota)->first();
+        return response()->json([
+            'status' => 'ok',
+            'anggota' => $anggota,
+        ]);
+    }
+
+    public function getBukuInfo(Request $request)
+    {
+        $barcodebuku = $request->barcodeBuku;
+        $buku = Buku::where('buku_code', $barcodebuku)->first();
+        return response()->json([
+            'status' => 'ok',
+            'buku' => $buku,
+        ]);
     }
 }

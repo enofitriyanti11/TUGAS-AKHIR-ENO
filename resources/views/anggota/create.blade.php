@@ -21,8 +21,6 @@
                                 <label for="male">Laki-laki</label>
                                 <input type="radio" id="female" name="jenis_kelamin" value="Perempuan" required>
                                 <label for="female">Perempuan</label><br><br>
-                                <!-- <label for="jenis_kelamin">Jenis Kelamin:</label>
-                                <input type="text" class="form-control mb-2" id="jenis_kelamin" name="jenis_kelamin" value="{{old('jenis_kelamin')}}" required> -->
                                 <label for="alamat">Alamat:</label>
                                 <textarea name="alamat" class="form-control mb-2" cols="30" rows="5" id="alamat" name="alamat" value="{{old('alamat')}}" required></textarea>
                                 <button type="submit" class="btn btn-success col-md-2">Submit</button>

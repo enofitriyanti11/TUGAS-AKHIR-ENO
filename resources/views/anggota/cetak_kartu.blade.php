@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetak Kartu Pustaka</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,7 +21,7 @@
 
         .ktp-card {
             width: 300px;
-            height: 250px;
+            height: 225px;
             border: 1px solid #ccc;
             margin: 10px;
             margin-bottom: auto;
@@ -72,8 +73,8 @@
                         <div class="col">Kelas: {{ $anggota->kelas }}</div>
                     </div>
                     <div class="barcode">
-                        {!! DNS1D::getBarcodeHTML($anggota->anggota_code, 'UPCA', 2, 50) !!}
-                        <p>{{ $anggota->anggota_code }}</p>
+                        {!! DNS1D::getBarcodeHTML(htmlspecialchars($anggota->anggota_code), 'EAN13') !!}
+                        <p class="barcode">p - {{ $anggota->anggota_code }}
                     </div>
                 </div>
             </div>

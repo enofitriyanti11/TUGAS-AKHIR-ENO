@@ -37,19 +37,49 @@ class BukuController extends Controller
         return view('buku.edit', compact('buku', 'kategoris'));
     }
 
+    private function calculateEAN13Checksum($digits)
+    {
+        $digitsArray = str_split($digits); // Konversi angka menjadi array digit
+
+        $evenSum = 0;
+        $oddSum = 0;
+
+        for ($i = 0; $i < 12; $i++) {
+            if ($i % 2 === 0) {
+                $oddSum += $digitsArray[$i];
+            } else {
+                $evenSum += $digitsArray[$i];
+            }
+        }
+
+        $totalSum = $oddSum + $evenSum * 3;
+        $remainder = $totalSum % 10;
+
+        return $remainder === 0 ? 0 : 10 - $remainder;
+    }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
 
-        $number = mt_rand(1000000000, 9999999999);
+        // Generate 12 digit random number
+        $randomNumber = mt_rand(100000000000, 999999999999);
 
-        if ($this->bukuCodeExists($number)) {
-            $number = mt_rand(1000000000, 9999999999);
+        // Calculate 1 digit checksum
+        $checksum = $this->calculateEAN13Checksum($randomNumber);
+
+        // Create 13 digit anggota code
+        $bukuCode = $randomNumber . $checksum;
+
+        // Validate and ensure it's unique
+        if ($this->bukuCodeExists($bukuCode)) {
+            // Generate again if it's not unique
+            // ...
         }
 
-        $request['buku_code'] = $number;
+        $request['buku_code'] = $bukuCode;
 
         $validatedData = $request->validate([
             'judul' => 'required',
@@ -64,6 +94,11 @@ class BukuController extends Controller
 
         buku::create($validatedData);
         return redirect('/buku')->with('pesan', 'Input Data Berhasil!');
+    }
+
+    public function bukuCodeExists($code)
+    {
+        return Buku::where('buku_code', $code)->exists();
     }
 
     public function update(Request $request,  $id_buku)
@@ -87,11 +122,6 @@ class BukuController extends Controller
         $buku->save();
 
         return redirect('/buku')->with('success', 'anggota berhasil diperbarui.');
-    }
-
-    public function bukuCodeExists($number)
-    {
-        return Buku::whereBukuCode($number)->exists();
     }
 
     public function destroy(Request $request, $id_buku)
