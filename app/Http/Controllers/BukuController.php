@@ -121,7 +121,7 @@ class BukuController extends Controller
         $buku->stok = $request->input('stok');
         $buku->save();
 
-        return redirect('/buku')->with('success', 'anggota berhasil diperbarui.');
+        return redirect('/buku')->with('pesan', 'Buku berhasil diperbarui.');
     }
 
     public function destroy(Request $request, $id_buku)

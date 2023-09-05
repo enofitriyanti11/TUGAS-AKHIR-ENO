@@ -9,6 +9,11 @@
                 <div class="row justify-content-md-center">
                     <h1 class="mt-1"><b>Kategori</b></h1>
                     <hr>
+                    @if (session('pesan'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('pesan')}}
+                    </div>
+                    @endif
                     <div class="card">
                         <div class="card-header">
                             <a href="/kategori/create" class="btn btn-primary">
@@ -27,7 +32,7 @@
                                 <tbody>
                                     @foreach ($kategoris as $kategori)
                                     <tr>
-                                        <th>{{ $kategori->id_kategori }}</th>
+                                        <th>{{ $loop->iteration }}</th>
                                         <td>{{ $kategori->nama_kategori }}</td>
                                         <td>
                                             <a href="{{route ('kategori.edit', $kategori->id_kategori) }}" class="btn btn-warning btn-sm">

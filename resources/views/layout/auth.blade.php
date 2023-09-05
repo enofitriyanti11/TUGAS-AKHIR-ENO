@@ -27,11 +27,11 @@
     <div class="bg order-1 order-md-2" style="background-image: url('{{ asset('login/images/bg.jpg') }}');"></div>
     <div class="contents order-2 order-md-1">
 
-      <div class="container">
+      <div class="container" style="background-color:	#F0FFFF	;">
         <div class="row align-items-center justify-content-center">
-          <div class="col-md-7">
-            <h3><strong>SISTEM PERPUSTAKAAN</strong></h3>
-            <h4><strong>SD IT ADZKIA 1 KOTA PADANG</strong></h4>
+          <div class="col-md-7 text-center">
+            <h3 class="mb-1"><strong>SISTEM PERPUSTAKAAN</strong></h3>
+            <h4 class="mb-1"><strong>SD IT ADZKIA 1 KOTA PADANG</strong></h4>
             @if (session('error'))
             <div class="alert alert-danger" role="alert">
               ⛔ {{ session('error') }}
@@ -44,16 +44,16 @@
             @endif
             <form action="{{ route('proses_login') }}" method="post">
               @csrf
-              <div class="form-group first">
-                <label for="username">Username</label>
-                <input type="text" name="email" class="form-control" placeholder="your-email@gmail.com">
+              <div class="form-group first mt-4" style="border-color: black;">
+                <label for="username" style="color: black; float: left;">Username</label>
+                <input type="text" name="email" class="form-control" placeholder="enter username">
                 @error('email')
                 <small class="text-danger">{{ $message }}</small>
                 @enderror
               </div>
-              <div class="form-group last mb-3">
-                <label for="password">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Your Password">
+              <div class="form-group last mb-3" style="border-color: black;">
+                <label for="password" style="color: black; float: left;">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="enter password">
                 @error('password')
                 <small class="text-danger">{{ $message }}</small>
                 @enderror
@@ -69,9 +69,6 @@
 
 
   </div>
-
-
-
   <script src="{{ asset('login') }}/js/jquery-3.3.1.min.js"></script>
   <script src="{{ asset('login') }}/js/popper.min.js"></script>
   <script src="{{ asset('login') }}/js/bootstrap.min.js"></script>

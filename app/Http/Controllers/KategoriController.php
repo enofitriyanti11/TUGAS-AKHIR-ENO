@@ -59,7 +59,7 @@ class KategoriController extends Controller
         $kategori->nama_kategori = $request->input('nama_kategori');
         $kategori->save();
 
-        return redirect('/kategori')->with('success', 'Kategori berhasil diperbarui.');
+        return redirect('/kategori')->with('pesan', 'Kategori berhasil diperbarui.');
     }
 
     /**

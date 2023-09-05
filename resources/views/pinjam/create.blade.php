@@ -31,7 +31,7 @@
                                     <input type="text" class="form-control mb-2" id="barcodeBuku" name="barcodeBuku" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="id_buku">Judul buku:</label>
+                                    <label for="id_buku">Judul buku: <span id="msg" class="text-danger"></span></label>
                                     <select name="id_buku" id="id_buku" class="form-control" readonly required></select>
                                 </div>
                             </div>
@@ -116,6 +116,7 @@
                             var data = '';
                             data += `<option value="${res.buku.id_buku}" hidden>${res.buku.judul}</option>`
                             $('#id_buku').append(data);
+                            $('#msg').html(`<b><small>(✅ Lokasi buku : ${res.lokasi} )</small></b>`)
                         }
                     }
                 },

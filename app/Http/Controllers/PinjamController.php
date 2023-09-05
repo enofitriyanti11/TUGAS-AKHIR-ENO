@@ -6,6 +6,7 @@ use App\Models\Pinjam;
 use App\Models\anggota;
 use App\Models\Buku;
 use DateTime;
+use Dompdf\Dompdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -77,49 +78,31 @@ class PinjamController extends Controller
         return redirect()->route('pinjam.index')->with('pesan', 'Berhasil dikonfirmasi!');
     }
 
+    public function perpanjang(Request $request, Pinjam $pinjam)
+    {
+        $pinjam->tgl_kembali = $request->tgl_kembali;
+        $pinjam->save();
+        return redirect()->route('pinjam.index')->with('pesan', 'Tanggal pengembalian Berhasil diupdate!');
+    }
+
+    public function edit($id_pinjam)
+    {
+        $pinjam = Pinjam::findOrFail($id_pinjam);
+        return view('pinjam.edit', compact('pinjam'));
+    }
+
     public function update(Request $request, $id_pinjam)
     {
-
         $validatedData = $request->validate([
-            'id_anggota' => 'required|exists:anggotas,id_anggota',
-            'id_buku' => 'required|exists:bukus,id_buku',
-            'tgl_pinjam' => 'required',
-            'tgl_kembali' => 'required',
-            'status' => 'required',
+            'lama_pinjam' => 'required|in:3,5,7', // Pastikan hanya nilai 3, 5, atau 7 yang diterima
         ]);
 
         $pinjam = Pinjam::findOrFail($id_pinjam);
-        $pinjam->id_anggota = $request->input('id_anggota');
-        $pinjam->id_buku = $request->input('id_buku');
-        $pinjam->tgl_pinjam = $request->input('tgl_pinjam');
-        $pinjam->tgl_kembali = $request->input('tgl_kembali');
-        $pinjam->status = $request->input('status');
+        $pinjam->update([
+            'lama_pinjam' => $request->lama_pinjam,
+        ]);
 
-        // Simpan tanggal tgl_seharusnya_kembali sebagai string dari input form
-        $tglSeharusnyaKembaliStr = $request->input('tgl_seharusnya_kembali');
-
-        // Ubah string menjadi objek DateTime
-        $tglSeharusnyaKembali = new \DateTime($tglSeharusnyaKembaliStr);
-
-        // Simpan tanggal tgl_kembali sebagai string dari input form
-        $tglKembaliStr = $request->input('tgl_kembali');
-
-        // Ubah string menjadi objek DateTime
-        $tglKembali = new \DateTime($tglKembaliStr);
-
-        // Hitung selisih hari antara tanggal kembali dan tanggal seharusnya dikembalikan
-        $selisihHari = $tglKembali->diff($tglSeharusnyaKembali)->days;
-
-        // Hitung denda jika terlambat mengembalikan
-        $denda = $selisihHari > 0 ? $selisihHari * 500 : 0;
-
-        $pinjam->denda = $denda;
-
-        $pinjam->save();
-        $pinjam->update($validatedData);
-
-
-        return redirect('/pinjam.index')->with('success', 'Peminjaman berhasil diperbarui.');
+        return redirect()->route('pinjam.index')->with('success', 'Data peminjaman berhasil diperbarui.');
     }
 
 
@@ -151,6 +134,17 @@ class PinjamController extends Controller
         return response()->json([
             'status' => 'ok',
             'buku' => $buku,
+            'lokasi' => $buku->kategori->lokasi->rak,
         ]);
+    }
+
+    public function show()
+    {
+        $pinjams = Pinjam::all();
+
+        $pdf = new Dompdf();
+        $pdf->loadHtml(view('anggota.cetak_kartu', compact('pinjams', 'pdf')));
+        $pdf->render();
+        return $pdf->stream();
     }
 }

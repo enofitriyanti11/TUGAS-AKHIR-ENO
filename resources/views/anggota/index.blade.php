@@ -9,15 +9,22 @@
                 <div class="row justify-content-md-center">
                     <h1 class="mt-1"><b>Siswa</b></h1>
                     <hr>
+                    @if (session('pesan'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('pesan')}}
+                    </div>
+                    @endif
                     <div class="card">
                         <div class="card-header">
-                            <a href="/anggota/create" class="btn btn-primary">
-                                Tambah
-                            </a>
-                            <a href="/anggota/cetak" class="btn btn-success">
-                                Cetak Kartu
-                            </a>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <a href="/anggota/create" class="btn btn-primary mr-2">Tambah</a>
+                                    <a href="/anggota/cetak" class="btn btn-success">Cetak Kartu</a>
+                                </div>
+
+                            </div>
                         </div>
+
                         <div class="card-body">
                             <table id="datatablesSimple">
                                 <thead>
@@ -50,7 +57,7 @@
                                             <form action="{{ route('anggota.destroy', $anggota->id_anggota) }}" method="POST" style="display: inline-block;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                                     <i class=" fas fa-trash"></i>
                                                 </button>
                                             </form>

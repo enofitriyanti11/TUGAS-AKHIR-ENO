@@ -7,38 +7,46 @@
         <main>
             <div class="container-fluid px-4">
                 <div class="row justify-content-md-center">
-                    <h1 class="mt-1"><b>Kategori</b></h1>
+                    <h1 class="mt-1"><b>User</b></h1>
                     <hr>
+                    @if (session('pesan'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('pesan')}}
+                    </div>
+                    @endif
                     <div class="card">
                         <div class="card-header">
-                            <a href="/kategori/create" class="btn btn-primary">
+                            <a href="/user/create" class="btn btn-primary">
                                 Tambah
                             </a>
                         </div>
                         <div class="card-body">
-                            <table id="datatablesSimple">
+                            <table id="datatablesSimple" class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th scope="col">No</th>
                                         <th scope="col">Nama</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Level</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($kategoris as $kategori)
+                                    <!-- Data pengguna akan diisi dari controller -->
+                                    @foreach ($users as $item)
                                     <tr>
-                                        <th>{{ $kategori->id_kategori }}</th>
-                                        <td>{{ $kategori->nama_kategori }}</td>
-                                        <td>
-                                            <a href="{{route ('kategori.edit', $kategori->id_kategori) }}" class="btn btn-warning btn-sm">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <form action="{{ route('kategori.destroy', $kategori->id_kategori) }}" method="POST" style="display: inline-block;">
+                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                        <td>{{ $item->name }}</td>
+                                        <td>{{ $item->email }}</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-primary">{{ $item->level }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <form action="{{ route('user.destroy',$item->id) }}" method="post">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">
-                                                    <i class=" fas fa-trash"></i>
-                                                </button>
+                                                <button type="submit" class="btn btn-link text-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                    <i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>
                                     </tr>
@@ -46,7 +54,6 @@
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
                 </div>
             </div>

@@ -18,7 +18,7 @@
         }
 
         .column {
-            width: 25%;
+            width: 30%;
             /* Empat kolom, setiap kolom mengambil 25% lebar */
             padding: 10px;
             box-sizing: border-box;

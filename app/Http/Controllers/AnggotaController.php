@@ -106,7 +106,7 @@ class AnggotaController extends Controller
         $anggota->alamat = $request->input('alamat');
         $anggota->save();
 
-        return redirect('/anggota')->with('success', 'anggota berhasil diperbarui.');
+        return redirect('/anggota')->with('pesan', 'anggota berhasil diperbarui.');
     }
 
     public function destroy(Request $request, $id_anggota)
