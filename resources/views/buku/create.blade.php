@@ -7,9 +7,9 @@
         <div id="layoutSidenav_content">
             <div class="container-fluid  px-2">
                 <div class="row justify-content-md-center">
-                    <div class="col-md-8">
-                        <div class="card px-4 mt-4  shadow">
-                            <h1 class="text-primary pt-4 text-center mb-4">Tambah Data Buku</h1>
+                    <div class="col-md-6">
+                        <div class="card px-3 mt-2  shadow">
+                            <h1 class="text-primary pt-3 text-center mb-4">Tambah Data Buku</h1>
 
                             <form action="{{ route('buku.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
@@ -34,7 +34,7 @@
                                 <label for="tempat_terbit">Tempat Terbit:</label>
                                 <input type="text" class="form-control mb-2" id="tempat_terbit" name="tempat_terbit" value="{{old('tempat_terbit')}}" required>
                                 <label for="stok">Stok:</label>
-                                <input type="number" class="form-control mb-2" id="stok" name="stok" value="{{old('stok')}}" required>
+                                <input type="number" class="form-control mb-2" id="stok" name="stok" value="{{old('stok')}}" required style="width: 200px;">
                                 <button type="submit" class="btn btn-success">submit</button>
 
                             </form>

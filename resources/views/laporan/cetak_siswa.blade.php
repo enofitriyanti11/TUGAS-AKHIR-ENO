@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Seluruh Data Siswa</title>
+    <title>Laporan Data Siswa</title>
+
     <style>
         @page {
             size: landscape;
@@ -46,11 +47,11 @@
 </head>
 
 <body>
-    <h1>Laporan Data Siswa</h1>
-
-    @foreach ($anggotas->groupBy('kelas') as $kelas => $siswaPerKelas)
+    <h1>Laporan Cetak Siswa</h1>
+    <hr>
+    @foreach ($anggotas->groupBy('id_kelas') as $kelasId => $siswas)
     <div class="class-section">
-        <h2>Kelas: {{ $kelas }}</h2>
+        <h2>Kelas: {{ $siswas[0]->kelas->nama_kelas }}</h2>
         <table>
             <thead>
                 <tr>
@@ -62,20 +63,24 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($siswaPerKelas as $anggota)
+                @foreach ($siswas as $siswa)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $anggota->nama_anggota }}</td>
-                    <td>{{ $anggota->kelas }}</td>
-                    <td>{{ $anggota->jenis_kelamin }}</td>
-                    <td>{{ $anggota->alamat }}</td>
+                    <td>{{ $siswa->nama_anggota }}</td>
+                    <td>{{ $siswa->kelas ? $siswa->kelas->nama_kelas : 'Belum ada data kelas terkait' }}</td>
+                    <td>{{ $siswa->jenis_kelamin }}</td>
+                    <td>{{ $siswa->alamat }}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
+    <div style="page-break-before: always;"></div>
+
     @endforeach
 
 </body>
+
+</html>
 
 </html>

@@ -8,7 +8,7 @@
         <main>
             <div class="container-fluid px-4">
                 <div class="row justify-content-md-center">
-                    <h1 class="mt-1"><b>Buku</b></h1>
+                    <h2 class="mt-1"><b>Buku</b></h2>
                     <hr>
                     @if (session('pesan'))
                     <div class="alert alert-success" role="alert">
@@ -20,9 +20,9 @@
                             <a href="/buku/create" class="btn btn-primary">
                                 Tambah
                             </a>
-                            <a href="/buku/cetak" class="btn btn-success">
+                            <!-- <a href="/buku/cetak" class="btn btn-success">
                                 Cetak Barcode
-                            </a>
+                            </a> -->
                         </div>
                         <div class="card-body">
                             <table id="datatablesSimple">
@@ -55,6 +55,8 @@
                                             <p class="barcode">p - {{ $buku->buku_code }}
                                         </td>
                                         <td>
+                                            <a target="_blank" href="{{route ('buku.print', $buku->id_buku) }}" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-print"></i></a>
                                             <a href="{{route ('buku.edit', $buku->id_buku) }}" class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i>
                                             </a>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kategori;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
 class KategoriController extends Controller
@@ -29,7 +30,8 @@ class KategoriController extends Controller
      */
     public function edit(string $id_kategori)
     {
-        $kategori = Kategori::findOrFail($id_kategori);
+        // $kategori = Kategori::findOrFail($id_kategori);
+        $kategori = Kategori::where('id_kategori', $id_kategori)->firstOrFail();
         return view('kategori.edit', compact('kategori'));
     }
 
@@ -39,7 +41,12 @@ class KategoriController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'nama_kategori' => 'required',
+            'nama_kategori' => [
+                'required',
+                Rule::unique('kategoris', 'nama_kategori'),
+            ],
+        ], [
+            'nama_kategori.unique' => 'Nama kategori sudah digunakan.',
 
         ]);
         Kategori::create($validatedData);
@@ -52,7 +59,8 @@ class KategoriController extends Controller
     public function update(Request $request,  $id_kategori)
     {
         $this->validate($request, [
-            'nama_kategori'     => 'required',
+            'nama_kategori' => 'required',
+
         ]);
 
         $kategori = Kategori::findOrFail($id_kategori);

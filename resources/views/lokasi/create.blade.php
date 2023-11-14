@@ -7,9 +7,9 @@
         <div id="layoutSidenav_content">
             <div class="container-fluid  px-4">
                 <div class="row justify-content-md-center">
-                    <div class="col-md-9">
-                        <div class="card px-5 mt-4  shadow">
-                            <h1 class="text-primary pt-4 text-center mb-4">Tambah Data Lokasi Buku</h1>
+                    <div class="col-md-6">
+                        <div class="card px-3 mt-2  shadow">
+                            <h1 class="text-primary pt-3 text-center mb-4">Tambah Data Lokasi Buku</h1>
 
                             <form action="{{ route('lokasi.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf

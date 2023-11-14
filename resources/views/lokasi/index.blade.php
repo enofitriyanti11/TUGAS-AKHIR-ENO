@@ -7,7 +7,7 @@
         <main>
             <div class="container-fluid px-4">
                 <div class="row justify-content-md-center">
-                    <h1 class="mt-1"><b>Lokasi Buku</b></h1>
+                    <h2 class="mt-1"><b>Lokasi Buku</b></h2>
                     <hr>
                     @if (session('pesan'))
                     <div class="alert alert-success" role="alert">

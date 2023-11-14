@@ -15,6 +15,10 @@
                     @endif
                     @if (Auth::user()->level == 'admin' || Auth::user()->level == 'petugas' )
                     <div class="sb-sidenav-menu-heading">Menu</div>
+                    <a class="nav-link" href="/kelas" style="color: white;">
+                        <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
+                        Data Kelas
+                    </a>
                     <a class="nav-link" href="/anggota" style="color: white;">
                         <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
                         Data Siswa
@@ -23,13 +27,13 @@
                         <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
                         Data Kategori
                     </a>
-                    <a class="nav-link" href="/buku" style="color: white;">
-                        <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                        Data Buku
-                    </a>
                     <a class="nav-link" href="/lokasi" style="color: white;">
                         <div class="sb-nav-link-icon"><i class="fas fa-map-marker-alt"></i></div>
                         Data Lokasi Buku
+                    </a>
+                    <a class="nav-link" href="/buku" style="color: white;">
+                        <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                        Data Buku
                     </a>
                     <div class="sb-sidenav-menu-heading">transaksi</div>
                     <a class="nav-link" href="/pinjam" style="color: white;">

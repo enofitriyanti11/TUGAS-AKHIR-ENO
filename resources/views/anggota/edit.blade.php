@@ -9,7 +9,7 @@
                 <div class="row justify-content-md-center">
                     <div class="col-md-9">
                         <div class="card px-5 mt-4  shadow">
-                            <h1 class="text-primary pt-4 text-center mb-4">Tambah Data Siswa</h1>
+                            <h1 class="text-primary pt-4 text-center mb-4">Edit Data Siswa</h1>
 
                             <form action="/anggota/{{$anggota->id_anggota}}" method="POST" enctype="multipart/form-data">
                                 @method('PUT')
@@ -22,11 +22,16 @@
                                     @enderror
                                 </div>
                                 <div class="mb-3">
-                                    <label for="kelas" class="form-label">Kelas</label>
-                                    <input type="text" class="form-control @error('kelas') is-invalid @enderror" id="kelas" name="kelas" value="{{ $anggota->kelas }}" required>
-                                    @error('kelas')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <label for="id_kelas" class="form-label">Kelas</label>
+                                    <select class="form-select" name="id_kelas" aria-label="Default select example">
+                                        @foreach ($kelas as $kelas)
+                                        @if (old('id_kelas')==$kelas->id_kelas)
+                                        <option value="{{$kelas->id_kelas}}" selected>{{$kelas->nama_kelas}}</option>
+                                        @else
+                                        <option value="{{$kelas->id_kelas}}">{{$kelas->nama_kelas}}</option>
+                                        @endif
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="jenis_kelamin">Jenis Kelamin:</label>
@@ -41,6 +46,13 @@
                                     <label for="alamat" class="form-label">Alamat</label>
                                     <input type="text" class="form-control @error('alamat') is-invalid @enderror" id="alamat" name="alamat" value="{{ $anggota->alamat }}" required>
                                     @error('alamat')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tahun" class="form-label">Tahun</label>
+                                    <input type="text" class="form-control @error('tahun') is-invalid @enderror" id="tahun" name="tahun" value="{{ $anggota->tahun }}" required>
+                                    @error('tahun')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>

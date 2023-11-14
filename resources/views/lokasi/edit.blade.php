@@ -9,7 +9,7 @@
                 <div class="row justify-content-md-center">
                     <div class="col-md-9">
                         <div class="card px-5 mt-4  shadow">
-                            <h1 class="text-primary pt-4 text-center mb-4">Tambah Data Lokasi Buku</h1>
+                            <h1 class="text-primary pt-4 text-center mb-4">Edit Data Lokasi Buku</h1>
 
                             <form action="/lokasi/{{$lokasi->id_lokasi}}" method="POST" enctype="multipart/form-data">
                                 @method('PUT')

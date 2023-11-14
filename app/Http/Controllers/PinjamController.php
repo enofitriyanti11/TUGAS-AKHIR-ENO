@@ -85,16 +85,16 @@ class PinjamController extends Controller
         return redirect()->route('pinjam.index')->with('pesan', 'Tanggal pengembalian Berhasil diupdate!');
     }
 
-    public function edit($id_pinjam)
-    {
-        $pinjam = Pinjam::findOrFail($id_pinjam);
-        return view('pinjam.edit', compact('pinjam'));
-    }
+    // public function edit($id_pinjam)
+    // {
+    //     $pinjam = Pinjam::findOrFail($id_pinjam);
+    //     return view('pinjam.edit', compact('pinjam'));
+    // }
 
     public function update(Request $request, $id_pinjam)
     {
         $validatedData = $request->validate([
-            'lama_pinjam' => 'required|in:3,5,7', // Pastikan hanya nilai 3, 5, atau 7 yang diterima
+            'lama_pinjam' => 'required|in:1,2,3,4,5,6,7', // Pastikan hanya nilai 3, 5, atau 7 yang diterima
         ]);
 
         $pinjam = Pinjam::findOrFail($id_pinjam);

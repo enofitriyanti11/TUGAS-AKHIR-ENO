@@ -9,7 +9,7 @@
                 <div class="row justify-content-md-center">
                     <div class="col-md-9">
                         <div class="card px-5 mt-4  shadow">
-                            <h1 class="text-primary pt-4 text-center mb-4">Tambah Data Kategori</h1>
+                            <h1 class="text-primary pt-4 text-center mb-4">Edit Data Kategori</h1>
 
                             <form action="/kategori/{{$kategori->id_kategori}}" method="POST" enctype="multipart/form-data">
                                 @method('PUT')

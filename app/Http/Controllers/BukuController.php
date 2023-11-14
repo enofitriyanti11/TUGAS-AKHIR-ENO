@@ -140,4 +140,9 @@ class BukuController extends Controller
         $pdf->render();
         return $pdf->stream();
     }
+
+    public function buku_print(Buku $buku)
+    {
+        return view('buku.print', compact('buku'));
+    }
 }

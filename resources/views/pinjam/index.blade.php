@@ -8,7 +8,7 @@
         <main>
             <div class="container-fluid px-4">
                 <div class="row justify-content-md-center">
-                    <h1 class="mt-1"><b>Peminjaman</b></h1>
+                    <h2 class="mt-1"><b>Peminjaman</b></h2>
                     <hr>
                     @if (session('pesan'))
                     <div class="alert alert-success" role="alert">
@@ -40,13 +40,14 @@
                                     @foreach ($pinjams as $pinjam)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
+                                        <!-- peminjaman -->
                                         <td class="text-center">{{ date('d-m-Y', strtotime($pinjam->tgl_pinjam )) }} s/d {{ date('d-m-Y', strtotime($pinjam->tgl_kembali )) }}
                                             <br>
                                             @if ($pinjam->status == 'dipinjam')
-                                            <button class="btn btn-link text-primary font-weight-bold" style="font-size: 12px;font-weight: 600" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fa fa-edit"></i> perpanjang tanggal</button>
+                                            <button class="btn btn-link text-primary font-weight-bold" style="font-size: 12px;font-weight: 600" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $pinjam->id_pinjam }}"><i class="fa fa-edit"></i> perpanjang tanggal</button>
 
                                             <!-- Modal -->
-                                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="exampleModal{{ $pinjam->id_pinjam }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -88,11 +89,17 @@
                                             </div>
                                             @endif
                                         </td>
-                                        <td>{{ $pinjam->status == 'dipinjam' ? '⛔belum dikembalikan' : date('d-m-Y', strtotime($pinjam->tgl_pengembalian )) }} </td>
+                                        <!-- tgl pengembalian -->
+                                        <td>{{ $pinjam->status == 'dipinjam' ? '-' : date('d-m-Y', strtotime($pinjam->tgl_pengembalian )) }} </td>
+                                        <!-- nama siswa -->
                                         <td>{{ $pinjam->anggota->nama_anggota }}</td>
-                                        <td>{{ $pinjam->anggota->kelas }}</td>
+                                        <!-- kelas -->
+                                        <td>{{ $pinjam->anggota->kelas->nama_kelas }}</td>
+                                        <!-- judul buku -->
                                         <td>{{ $pinjam->buku->judul  }} <br><b><small>{{ $pinjam->buku->kategori->lokasi->rak }}</b></td>
-                                        <td>{{ $pinjam->status == 'dipinjam' ? '⛔belum dikembalikan' : 'Rp '.number_format($pinjam->denda) }}</td>
+                                        <!-- denda -->
+                                        <td>{{ $pinjam->status == 'dipinjam' ? '-' : 'Rp '.number_format($pinjam->denda) }}</td>
+                                        <!-- status -->
                                         <td>
                                             @if ($pinjam->status == 'dipinjam')
                                             <span class="badge bg-danger">{{ $pinjam->status }}</span>
@@ -100,15 +107,13 @@
                                             <span class="badge bg-success">{{ $pinjam->status }}</span>
                                             @endif
                                         </td>
+                                        <!-- aksi -->
                                         <td>
+                                            <!-- ceklis kembali -->
                                             <a onclick="return confirm('Yakin buku telah dikembalikan?')" href="{{ route('anggota.konfirmasi_pengembalian', $pinjam->id_pinjam) }}" class="btn btn-success btn-sm" title="Konfirmasi Pengembalian">
                                                 <i class="fas fa-check btn-block"></i>
                                             </a>
-
-                                            <!-- <a href="{{route ('pinjam.edit', $pinjam->id_pinjam) }}" class="btn btn-warning btn-sm">
-                                                <i class="fas fa-edit"></i>
-                                            </a> -->
-
+                                            <!-- hapus data -->
                                             <form action="{{ route('pinjam.destroy', $pinjam->id_pinjam) }}" method="POST" style="display: inline-block;">
                                                 @csrf
                                                 @method('DELETE')

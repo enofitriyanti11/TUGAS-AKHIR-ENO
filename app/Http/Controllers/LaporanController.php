@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\anggota;
 use App\Models\Buku;
-
+use App\Models\Kelas;
+use App\Models\Kategori;
 use App\Models\Pinjam;
 use Dompdf\Dompdf;
 use Illuminate\Http\Request;
@@ -19,17 +20,20 @@ class LaporanController extends Controller
 
     public function cetakSiswa()
     {
-        $anggotas = anggota::all();
-        $anggotas = anggota::orderBy('kelas')->get();
-        $anggotas = anggota::orderBy('kelas')
-            ->orderBy('nama_anggota')
-            ->get();
+        $anggotas = Anggota::with('kelas')->orderBy('id_kelas')->get();
+
         $pdf = new Dompdf();
         $pdf->setPaper('landscape');
-        $pdf->loadHtml(view('laporan.cetak_siswa', compact('anggotas', 'pdf')));
+
+        // Load view dan pass data ke dalamnya
+        $pdf->loadHtml(view('laporan.cetak_siswa', compact('anggotas')));
+
+        // Render PDF
         $pdf->render();
-        return $pdf->stream();
+
+        return $pdf->stream('cetak_siswa.pdf');
     }
+
 
     public function cetakBuku()
     {
@@ -38,29 +42,22 @@ class LaporanController extends Controller
         $pdf->setPaper('landscape');
         $pdf->loadHtml(view('laporan.cetak_buku', compact('bukus', 'pdf')));
         $pdf->render();
-        return $pdf->stream();
+        return $pdf->stream('cetak_buku.pdf');
     }
+
 
     public function cetakPeminjamanSiswa()
     {
-        $pinjams = Pinjam::with(['anggota', 'buku'])
-            ->orderBy('id_pinjam')
+        $pinjams = Pinjam::with(['anggota', 'anggota.kelas', 'buku'])
+            ->orderByRaw("MONTH(tgl_pinjam)")
+            ->orderBy('tgl_pinjam')
             ->get();
-
-        // Mengambil daftar kelas dari tabel Kelas dan urutkan sesuai keinginan
-        $kelasOrder = anggota::orderBy('kelas')->pluck('kelas')->toArray();
-
-        $pinjamsGroupedByKelas = $pinjams->groupBy(function ($item) {
-            return $item->anggota->kelas;
-        })->sortBy(function ($items, $kelas) use ($kelasOrder) {
-            return array_search($kelas, $kelasOrder);
-        });
 
         $pdf = new Dompdf();
         $pdf->setPaper('landscape');
-        $pdf->loadHtml(view('laporan.cetak_peminjamansiswa', compact('pinjamsGroupedByKelas')));
+        $pdf->loadHtml(view('laporan.cetak_peminjamansiswa', compact('pinjams')));
         $pdf->render();
-        return $pdf->stream();
+        return $pdf->stream('laporan_peminjaman_siswa.pdf');
     }
 
 
@@ -75,6 +72,6 @@ class LaporanController extends Controller
         $pdf->setPaper('landscape');
         $pdf->loadHtml(view('laporan.cetak_peminjaman', compact('pinjams', 'pdf')));
         $pdf->render();
-        return $pdf->stream();
+        return $pdf->stream('cetak_peminjaman.pdf');
     }
 }

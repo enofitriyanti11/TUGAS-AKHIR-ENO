@@ -14,8 +14,14 @@ class anggota extends Model
     protected $fillable = [
         'nama_anggota',
         'jenis_kelamin',
-        'kelas',
+        'id_kelas',
         'alamat',
-        'anggota_code'
+        'anggota_code',
+        'tahun'
     ];
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'id_kelas', 'id_kelas');
+    }
 }

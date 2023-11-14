@@ -8,7 +8,7 @@
         <main>
             <div class="container-fluid px-4">
                 <div class="row justify-content-md-center">
-                    <h1 class="mt-1"><b>Laporan</b></h1>
+                    <h2 class="mt-1"><b>Laporan</b></h2>
                     <hr>
                     <div class="card">
                         <div class="card-header">

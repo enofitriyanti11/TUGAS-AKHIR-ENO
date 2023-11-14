@@ -15,6 +15,8 @@ class Pinjam extends Model
         'id_buku',
         'tgl_pinjam',
         'tgl_kembali',
+        'tgl_pengembalian',
+        'denda',
         'status'
     ];
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\anggota;
+use App\Models\Kelas;
 use Dompdf\Dompdf;
 use Illuminate\Http\Request;
 
@@ -10,14 +11,14 @@ class AnggotaController extends Controller
 {
     public function index()
     {
-        $anggotas = anggota::all();
+        $anggotas = anggota::with('kelas')->get();
         return view('anggota.index', compact('anggotas'));
     }
 
     public function create()
     {
-
-        return view('anggota.create');
+        $kelas = Kelas::all();
+        return view('anggota.create', compact('kelas'));
     }
 
     /**
@@ -26,7 +27,8 @@ class AnggotaController extends Controller
     public function edit(string $id_anggota)
     {
         $anggota = anggota::findOrFail($id_anggota);
-        return view('anggota.edit', compact('anggota'));
+        $kelas = Kelas::all();
+        return view('anggota.edit', compact('anggota', 'kelas'));
     }
 
     private function calculateEAN13Checksum($digits)
@@ -72,10 +74,11 @@ class AnggotaController extends Controller
 
         $validatedData = $request->validate([
             'nama_anggota' => 'required',
-            'kelas' => 'required',
+            'id_kelas' => 'required|exists:kelas,id_kelas',
             'jenis_kelamin' => 'required',
             'alamat' => 'required',
-            'anggota_code' => 'required'
+            'anggota_code' => 'required',
+            'tahun' => 'required|numeric',
 
         ]);
         anggota::create($validatedData);
@@ -94,16 +97,18 @@ class AnggotaController extends Controller
     {
         $this->validate($request, [
             'nama_anggota' => 'required',
-            'kelas' => 'required',
+            'id_kelas' => 'required',
             'jenis_kelamin' => 'required',
             'alamat' => 'required',
+            'tahun' => 'required',
         ]);
 
         $anggota = anggota::findOrFail($id_anggota);
         $anggota->nama_anggota = $request->input('nama_anggota');
-        $anggota->kelas = $request->input('kelas');
+        $anggota->id_kelas = $request->input('id_kelas');
         $anggota->jenis_kelamin = $request->input('jenis_kelamin');
         $anggota->alamat = $request->input('alamat');
+        $anggota->tahun = $request->input('tahun');
         $anggota->save();
 
         return redirect('/anggota')->with('pesan', 'anggota berhasil diperbarui.');
@@ -118,10 +123,11 @@ class AnggotaController extends Controller
     public function show()
     {
         $anggotas = anggota::all();
+        return view('anggota.cetak_kartu', compact('anggotas'));
 
-        $pdf = new Dompdf();
-        $pdf->loadHtml(view('anggota.cetak_kartu', compact('anggotas', 'pdf')));
-        $pdf->render();
-        return $pdf->stream();
+        // $pdf = new Dompdf();
+        // $pdf->loadHtml(view('anggota.cetak_kartu', compact('anggotas', 'pdf')));
+        // $pdf->render();
+        // return $pdf->stream();
     }
 }

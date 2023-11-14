@@ -7,7 +7,9 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PinjamController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\KelasController;
 use App\Http\Controllers\UserController;
+use App\Models\Pinjam;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,7 +23,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
 Route::middleware(['not_login'])->group(function () {
     Route::get('/', [AuthController::class, 'index'])->name('login');
     Route::post('/login-s', [AuthController::class, 'login'])->name('proses_login');
@@ -29,7 +30,22 @@ Route::middleware(['not_login'])->group(function () {
 
 Route::middleware(['auth', 'is_login'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard.index');
+        $bulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+        $tahun = date('Y');
+        $data = [];
+        $pinjam = [];
+        $kembali = [];
+        foreach ($bulan as $key => $b) {
+            $pinjam[] =  [
+                "x" => $b,
+                "y" => Pinjam::whereMonth('tgl_pinjam', $key + 1)->whereYear('tgl_pinjam', $tahun)->where('status', 'dipinjam')->count()
+            ];
+            $kembali[] = [
+                "x" => $b,
+                "y" => Pinjam::whereMonth('tgl_pinjam', $key + 1)->whereYear('tgl_pinjam', $tahun)->where('status', 'dikembalikan')->count(),
+            ];
+        }
+        return view('dashboard.index', compact('data', 'pinjam', 'kembali'));
     })->name('dashboard');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -38,7 +54,9 @@ Route::middleware(['auth', 'is_login'])->group(function () {
     Route::get('anggota/cetak', [AnggotaController::class, 'show'])->name('anggota.cetak_kartu');
     Route::resource('buku', BukuController::class);
     Route::get('buku/cetak', [BukuController::class, 'cetak'])->name('buku.cetak_buku');
+    Route::get('buku/print/{buku}', [BukuController::class, 'buku_print'])->name('buku.print');
     Route::resource('kategori', KategoriController::class);
+    Route::resource('kelas', KelasController::class);
     Route::resource('pinjam', PinjamController::class);
     Route::resource('lokasi', LokasiController::class);
 

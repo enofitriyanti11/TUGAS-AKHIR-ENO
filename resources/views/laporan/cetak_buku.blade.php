@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Data Buku</title>
+    <br>
     <style>
         @page {
             size: landscape;
@@ -16,7 +17,6 @@
 
         h1 {
             text-align: center;
-            margin-bottom: 20px;
         }
 
         table {
@@ -44,6 +44,7 @@
 
 <body>
     <h1>Laporan Data Buku</h1>
+    <hr>
     <table>
         <thead>
             <tr>

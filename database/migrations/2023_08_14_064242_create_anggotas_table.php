@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('id_anggota');
             $table->string('nama_anggota');
             $table->string('jenis_kelamin');
-            $table->string('kelas');
+            $table->string('id_kelas');
             $table->text('alamat');
             $table->string('anggota_code');
             $table->timestamps();

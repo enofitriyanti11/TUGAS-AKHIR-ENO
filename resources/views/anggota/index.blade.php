@@ -7,7 +7,7 @@
         <main>
             <div class="container-fluid px-4">
                 <div class="row justify-content-md-center">
-                    <h1 class="mt-1"><b>Siswa</b></h1>
+                    <h2 class="mt-1"><b>Siswa</b></h2>
                     <hr>
                     @if (session('pesan'))
                     <div class="alert alert-success" role="alert">
@@ -19,7 +19,7 @@
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <a href="/anggota/create" class="btn btn-primary mr-2">Tambah</a>
-                                    <a href="/anggota/cetak" class="btn btn-success">Cetak Kartu</a>
+                                    <a target="_blank" href="/anggota/cetak" class="btn btn-success">Cetak Kartu</a>
                                 </div>
 
                             </div>
@@ -34,6 +34,7 @@
                                         <th scope="col">Kelas</th>
                                         <th scope="col">Jenis Kelamin</th>
                                         <th scope="col">Alamat</th>
+                                        <th scope="col">Tahun</th>
                                         <th scope="col">Barcode</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
@@ -43,17 +44,28 @@
                                     <tr>
                                         <th>{{ $loop->iteration }}</th>
                                         <td>{{ $anggota->nama_anggota }}</td>
-                                        <td>{{ $anggota->kelas }}</td>
+                                        <!-- <td>{{ $anggota->kelas->nama_kelas }}</td> -->
+                                        <td>
+                                            @if ($anggota->kelas)
+                                            {{ $anggota->kelas->nama_kelas }}
+                                            @else
+                                            Belum ada data kelas terkait.
+                                            @endif
+                                        </td>
+
                                         <td>{{ $anggota->jenis_kelamin }}</td>
                                         <td>{{ $anggota->alamat }}</td>
+                                        <td>{{ $anggota->tahun }}</td>
                                         <td>{!! DNS1D::getBarcodeHTML(htmlspecialchars($anggota->anggota_code), 'EAN13') !!}
                                             <p class="barcode">p - {{ $anggota->anggota_code }}
                                         </td>
 
                                         <td>
+
                                             <a href="{{route ('anggota.edit', $anggota->id_anggota) }}" class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+
                                             <form action="{{ route('anggota.destroy', $anggota->id_anggota) }}" method="POST" style="display: inline-block;">
                                                 @csrf
                                                 @method('DELETE')
